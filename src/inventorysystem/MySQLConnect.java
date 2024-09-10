@@ -19,10 +19,10 @@ public class MySQLConnect {
      try{
         // Class.forName("com.mysql.jdbc.Driver");    `com.mysql.cj.jdbc.Driver'              com.mysql.jdbc.Driver
          Class.forName("com.mysql.cj.jdbc.Driver");  
-         JOptionPane.showMessageDialog(null, "Driver Load");
-      //  conn=DriverManager.getConnection("jdbc:mysql://localhost:3306:csmssteacherinfo","root","root");
-      con=DriverManager.getConnection("jdbc:mysql://localhost:3306/inventory","root","@PrajaktaMysql3"); 
-	JOptionPane.showMessageDialog(null, "Databse Connection SuccessFul MySQLConnect getconn method ");
+        // JOptionPane.showMessageDialog(null, "Driver Load");
+      
+      con=DriverManager.getConnection("jdbc:mysql://localhost:3306/inventory","root","root"); 
+	//JOptionPane.showMessageDialog(null, "Databse Connection SuccessFul MySQLConnect getconn method ");
         //;Class.forName("com.mysql.jdbc.Driver");  
   
         return con;             

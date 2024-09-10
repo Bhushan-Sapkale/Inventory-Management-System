@@ -4,12 +4,21 @@
  */
 package inventorysystem;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.sql.Connection;
-
 import java.util.Date;
 import javax.swing.JOptionPane;
 import java.sql.*;
 import java.sql.ResultSet;
+import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
+import javax.swing.JTable;
+import net.proteanit.sql.DbUtils;
+
+
+
+
 //import java.sql.Connection;
 /**
  *
@@ -24,6 +33,70 @@ public class ClientInformationSystem extends javax.swing.JFrame {
     public ClientInformationSystem() {
         initComponents();
         myc=new MySQLConnect();
+        update_table();//calling to show the record
+        
+        set_client_id();
+        jTextFieldClientId.setEditable(false);
+    }
+    //add the client id to JTextFiledClientId
+
+public void set_client_id() {
+
+     PreparedStatement pat;
+          MySQLConnect msc=new MySQLConnect();
+          Connection con=myc.getConn();
+          ResultSet rs;
+       try{
+         String sql="Select max_id from variable_table";
+          pat=con.prepareStatement(sql);
+         rs=pat.executeQuery(sql);
+         System.out.println("Cleint information set client id method");
+           if (rs.next()) {
+               
+              int num=rs.getInt(1)+1;
+            
+              jTextFieldClientId.setText(""+num);
+              update_table();
+        }
+         } catch (Exception e) {
+              System.out.println("Max id Error set client id method at Client inoformation "+e);
+        }finally {
+                        try{
+                            if ( con!=null) {
+                                con.close();
+                                System.out.println("Client Information DB Disconnected");
+                                
+                            }
+                        }catch (Exception e) {
+                               JOptionPane.showMessageDialog(null," Client Information update table Finally block error " + e);
+                               Logger.getLogger(ClientInformationSystem.class.getName()).log(Level.SEVERE,null,e);
+                        } // catch 
+                    } // finally 
+     }
+    public void update_table(){
+    PreparedStatement pat;
+    ResultSet rs;
+    Connection con =  myc.getConn();
+    
+    try{
+    String sql = "select id,name,address,contact,date from client_info";
+    pat=con.prepareStatement(sql);
+    rs = pat.executeQuery(sql);
+    jTable1.setModel(DbUtils.resultSetToTableModel(rs));
+    }catch(Exception e){
+    JOptionPane.showMessageDialog(null, e);
+    }finally {
+                        try{
+                            if ( con!=null) {
+                                con.close();
+                                System.out.println("Client Information DB Disconnected");
+                                
+                            }
+                        }catch (Exception e) {
+                               JOptionPane.showMessageDialog(null," Client Information update table Finally block error " + e);
+                               Logger.getLogger(ClientInformationSystem.class.getName()).log(Level.SEVERE,null,e);
+                        } // catch 
+                    } // finally 
     }
 
     /**
@@ -66,8 +139,8 @@ public class ClientInformationSystem extends javax.swing.JFrame {
         jTextFieldClientName = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextAreaAddress = new javax.swing.JTextArea();
-        jDateChooserDate = new com.toedter.calendar.JDateChooser();
         jTextFieldContacts = new javax.swing.JTextField();
+        jDateChooserDate = new com.toedter.calendar.JDateChooser();
         jPanel9 = new javax.swing.JPanel();
         jLabel14 = new javax.swing.JLabel();
         jButtonSave = new javax.swing.JButton();
@@ -84,9 +157,9 @@ public class ClientInformationSystem extends javax.swing.JFrame {
 
         jPanel1.setBackground(new java.awt.Color(0, 153, 204));
 
-        jPanelHead.setBackground(new java.awt.Color(153, 153, 153));
+        jPanelHead.setBackground(new java.awt.Color(204, 255, 255));
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 36)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Times New Roman", 1, 36)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 0, 0));
         jLabel1.setText("INVENTORY");
 
@@ -96,8 +169,8 @@ public class ClientInformationSystem extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap(173, Short.MAX_VALUE)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 211, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(151, 151, 151))
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 247, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(115, 115, 115))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -107,7 +180,7 @@ public class ClientInformationSystem extends javax.swing.JFrame {
                 .addContainerGap(20, Short.MAX_VALUE))
         );
 
-        jLabel11.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel11.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
         jLabel11.setText("CSMSS Chh.Shahu Collage of Engneering Chh. Sambhajinagar Maharshtra ");
 
         javax.swing.GroupLayout jPanelHeadLayout = new javax.swing.GroupLayout(jPanelHead);
@@ -134,9 +207,10 @@ public class ClientInformationSystem extends javax.swing.JFrame {
                 .addContainerGap(22, Short.MAX_VALUE))
         );
 
-        jPanelMain.setBackground(new java.awt.Color(255, 255, 204));
+        jPanelMain.setBackground(new java.awt.Color(0, 255, 204));
 
         jLabel2.setFont(new java.awt.Font("Serif", 1, 24)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(255, 153, 0));
         jLabel2.setText("Home");
         jLabel2.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -145,49 +219,55 @@ public class ClientInformationSystem extends javax.swing.JFrame {
         });
 
         jLabel3.setFont(new java.awt.Font("Serif", 1, 24)); // NOI18N
+        jLabel3.setForeground(new java.awt.Color(255, 153, 51));
         jLabel3.setText("Client");
         jLabel3.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         jLabel4.setFont(new java.awt.Font("Serif", 1, 24)); // NOI18N
+        jLabel4.setForeground(new java.awt.Color(255, 153, 51));
         jLabel4.setText("Transaction Data Items");
 
         jLabel5.setFont(new java.awt.Font("Serif", 1, 24)); // NOI18N
+        jLabel5.setForeground(new java.awt.Color(255, 153, 51));
         jLabel5.setText("Inward Data Intems");
 
         jLabel6.setFont(new java.awt.Font("Serif", 1, 24)); // NOI18N
+        jLabel6.setForeground(new java.awt.Color(255, 153, 0));
         jLabel6.setText("Print");
 
         jLabel7.setFont(new java.awt.Font("Serif", 1, 24)); // NOI18N
+        jLabel7.setForeground(new java.awt.Color(255, 153, 0));
         jLabel7.setText("Search");
 
         jLabel8.setFont(new java.awt.Font("Serif", 1, 24)); // NOI18N
+        jLabel8.setForeground(new java.awt.Color(255, 153, 0));
         jLabel8.setText("Analytical Statistical");
 
         jLabel9.setFont(new java.awt.Font("Serif", 1, 24)); // NOI18N
+        jLabel9.setForeground(new java.awt.Color(255, 153, 0));
         jLabel9.setText("Referesh");
 
         jLabel10.setFont(new java.awt.Font("Serif", 1, 24)); // NOI18N
+        jLabel10.setForeground(new java.awt.Color(255, 153, 51));
         jLabel10.setText("Log Out /Sign Out");
 
         javax.swing.GroupLayout jPanelMainLayout = new javax.swing.GroupLayout(jPanelMain);
         jPanelMain.setLayout(jPanelMainLayout);
         jPanelMainLayout.setHorizontalGroup(
             jPanelMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanelMainLayout.createSequentialGroup()
-                .addGap(37, 37, 37)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelMainLayout.createSequentialGroup()
+                .addContainerGap(21, Short.MAX_VALUE)
                 .addGroup(jPanelMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanelMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, 238, Short.MAX_VALUE)
-                        .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGroup(jPanelMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 82, Short.MAX_VALUE)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 256, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 238, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 238, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 238, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 238, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4))
+                .addGap(17, 17, 17))
         );
         jPanelMainLayout.setVerticalGroup(
             jPanelMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -198,13 +278,13 @@ public class ClientInformationSystem extends javax.swing.JFrame {
                 .addComponent(jLabel3)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel4)
-                .addGap(28, 28, 28)
-                .addComponent(jLabel5)
                 .addGap(27, 27, 27)
+                .addComponent(jLabel5)
+                .addGap(28, 28, 28)
                 .addComponent(jLabel6)
-                .addGap(35, 35, 35)
-                .addComponent(jLabel7)
                 .addGap(34, 34, 34)
+                .addComponent(jLabel7)
+                .addGap(35, 35, 35)
                 .addComponent(jLabel8)
                 .addGap(35, 35, 35)
                 .addComponent(jLabel9)
@@ -213,13 +293,27 @@ public class ClientInformationSystem extends javax.swing.JFrame {
                 .addContainerGap(94, Short.MAX_VALUE))
         );
 
-        jPanelBody.setBackground(new java.awt.Color(255, 204, 204));
+        jPanelBody.setBackground(new java.awt.Color(255, 51, 255));
 
         jLabel12.setFont(new java.awt.Font("Serif", 0, 18)); // NOI18N
-        jLabel12.setForeground(new java.awt.Color(0, 0, 255));
+        jLabel12.setForeground(new java.awt.Color(204, 0, 0));
         jLabel12.setText("Search Client Id: ");
 
+        jLabel16.setBackground(new java.awt.Color(255, 255, 204));
+        jLabel16.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
+        jLabel16.setForeground(new java.awt.Color(204, 0, 0));
         jLabel16.setText("Search ");
+
+        jTextFieldSearchClientid.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextFieldSearchClientidActionPerformed(evt);
+            }
+        });
+        jTextFieldSearchClientid.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jTextFieldSearchClientidKeyReleased(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
@@ -251,36 +345,29 @@ public class ClientInformationSystem extends javax.swing.JFrame {
         jLabel13.setForeground(new java.awt.Color(0, 0, 255));
         jLabel13.setText("Client Information: ");
 
-        jLabel17.setFont(new java.awt.Font("Serif", 0, 18)); // NOI18N
+        jLabel17.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
         jLabel17.setForeground(new java.awt.Color(255, 51, 51));
         jLabel17.setText("Client ID:");
 
-        jLabel18.setFont(new java.awt.Font("Serif", 0, 18)); // NOI18N
+        jLabel18.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
         jLabel18.setForeground(new java.awt.Color(255, 51, 51));
         jLabel18.setText("Name :");
 
-        jLabel19.setFont(new java.awt.Font("Serif", 0, 18)); // NOI18N
+        jLabel19.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
         jLabel19.setForeground(new java.awt.Color(255, 51, 51));
         jLabel19.setText("Address: ");
 
-        jLabel20.setFont(new java.awt.Font("Serif", 0, 18)); // NOI18N
+        jLabel20.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
         jLabel20.setForeground(new java.awt.Color(255, 51, 51));
         jLabel20.setText("Date: ");
 
-        jLabel21.setFont(new java.awt.Font("Serif", 0, 18)); // NOI18N
+        jLabel21.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
         jLabel21.setForeground(new java.awt.Color(255, 51, 51));
         jLabel21.setText("Contact No: ");
 
-        jTextFieldClientId.setText("Enter Id");
-
-        jTextFieldClientName.setText("Enter name");
-
         jTextAreaAddress.setColumns(20);
         jTextAreaAddress.setRows(5);
-        jTextAreaAddress.setText("Enter address");
         jScrollPane1.setViewportView(jTextAreaAddress);
-
-        jTextFieldContacts.setText("Enter Contact number");
 
         javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
         jPanel8.setLayout(jPanel8Layout);
@@ -294,16 +381,16 @@ public class ClientInformationSystem extends javax.swing.JFrame {
                         .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jLabel17, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jLabel18, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel19, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel20, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel21, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(jLabel21, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel19))
                         .addGap(31, 31, 31)
                         .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jTextFieldClientName)
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                            .addComponent(jDateChooserDate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jTextFieldContacts, javax.swing.GroupLayout.DEFAULT_SIZE, 212, Short.MAX_VALUE)
-                            .addComponent(jTextFieldClientId))))
+                            .addComponent(jTextFieldClientId)
+                            .addComponent(jDateChooserDate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap(25, Short.MAX_VALUE))
         );
         jPanel8Layout.setVerticalGroup(
@@ -319,68 +406,79 @@ public class ClientInformationSystem extends javax.swing.JFrame {
                         .addComponent(jLabel17)))
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel8Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jDateChooserDate, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(115, 115, 115))
+                        .addGap(14, 14, 14)
+                        .addComponent(jTextFieldClientName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel8Layout.createSequentialGroup()
-                        .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel8Layout.createSequentialGroup()
-                                .addGap(14, 14, 14)
-                                .addComponent(jTextFieldClientName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel8Layout.createSequentialGroup()
-                                .addGap(12, 12, 12)
-                                .addComponent(jLabel18, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel19, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 42, Short.MAX_VALUE)
-                        .addComponent(jLabel20)
-                        .addGap(42, 42, 42)
-                        .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel21, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextFieldContacts, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(64, 64, 64))))
+                        .addGap(12, 12, 12)
+                        .addComponent(jLabel18, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel19, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 42, Short.MAX_VALUE)
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel20, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jDateChooserDate, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(42, 42, 42)
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel21, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTextFieldContacts, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(64, 64, 64))
         );
 
         jLabel14.setFont(new java.awt.Font("Serif", 0, 18)); // NOI18N
         jLabel14.setForeground(new java.awt.Color(0, 0, 255));
         jLabel14.setText("Operations: ");
 
+        jButtonSave.setBackground(new java.awt.Color(255, 255, 204));
         jButtonSave.setFont(new java.awt.Font("Serif", 1, 12)); // NOI18N
         jButtonSave.setText("Save");
-        jButtonSave.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButtonSave.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jButtonSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonSaveActionPerformed(evt);
             }
         });
 
+        jButtonDelete.setBackground(new java.awt.Color(255, 255, 204));
         jButtonDelete.setFont(new java.awt.Font("Serif", 1, 12)); // NOI18N
         jButtonDelete.setText("Delete");
-        jButtonDelete.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButtonDelete.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jButtonDelete.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonDeleteActionPerformed(evt);
             }
         });
 
+        jButtonUpdate.setBackground(new java.awt.Color(255, 255, 204));
         jButtonUpdate.setFont(new java.awt.Font("Serif", 1, 12)); // NOI18N
         jButtonUpdate.setText("Update");
-        jButtonUpdate.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButtonUpdate.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jButtonUpdate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonUpdateActionPerformed(evt);
+            }
+        });
 
+        jButtonClear.setBackground(new java.awt.Color(255, 255, 204));
         jButtonClear.setFont(new java.awt.Font("Serif", 1, 12)); // NOI18N
         jButtonClear.setText("Clear");
-        jButtonClear.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButtonClear.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jButtonClear.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonClearActionPerformed(evt);
             }
         });
 
+        jButtonPrint.setBackground(new java.awt.Color(255, 255, 204));
         jButtonPrint.setFont(new java.awt.Font("Serif", 1, 12)); // NOI18N
         jButtonPrint.setText("Print");
-        jButtonPrint.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButtonPrint.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jButtonPrint.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonPrintActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
         jPanel9.setLayout(jPanel9Layout);
@@ -392,34 +490,34 @@ public class ClientInformationSystem extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel9Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButtonSave, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButtonDelete)
-                    .addComponent(jButtonUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButtonClear, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButtonPrint, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(23, 23, 23))
+                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(jButtonUpdate, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 72, Short.MAX_VALUE)
+                    .addComponent(jButtonSave, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButtonDelete, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButtonClear, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButtonPrint, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         jPanel9Layout.setVerticalGroup(
             jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel9Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel14)
-                .addGap(35, 35, 35)
-                .addComponent(jButtonSave)
+                .addGap(37, 37, 37)
+                .addComponent(jButtonSave, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jButtonDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(40, 40, 40)
+                .addComponent(jButtonUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(32, 32, 32)
+                .addComponent(jButtonClear, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(39, 39, 39)
-                .addComponent(jButtonDelete)
-                .addGap(54, 54, 54)
-                .addComponent(jButtonUpdate)
-                .addGap(41, 41, 41)
-                .addComponent(jButtonClear)
-                .addGap(50, 50, 50)
-                .addComponent(jButtonPrint)
+                .addComponent(jButtonPrint, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jLabel15.setFont(new java.awt.Font("Serif", 0, 18)); // NOI18N
-        jLabel15.setForeground(new java.awt.Color(0, 0, 255));
+        jLabel15.setForeground(new java.awt.Color(255, 0, 0));
         jLabel15.setText("All Clients Detailed Information:");
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
@@ -433,6 +531,11 @@ public class ClientInformationSystem extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable1MouseClicked(evt);
+            }
+        });
         jScrollPane2.setViewportView(jTable1);
 
         javax.swing.GroupLayout jPanel10Layout = new javax.swing.GroupLayout(jPanel10);
@@ -496,7 +599,7 @@ public class ClientInformationSystem extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanelHead, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jPanelMain, javax.swing.GroupLayout.PREFERRED_SIZE, 276, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jPanelMain, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanelBody, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE))))
@@ -509,7 +612,7 @@ public class ClientInformationSystem extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanelMain, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanelBody, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                    .addComponent(jPanelBody, javax.swing.GroupLayout.PREFERRED_SIZE, 633, Short.MAX_VALUE))
                 .addGap(114, 114, 114))
         );
 
@@ -520,7 +623,7 @@ public class ClientInformationSystem extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(66, Short.MAX_VALUE))
+                .addContainerGap(56, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -535,13 +638,42 @@ public class ClientInformationSystem extends javax.swing.JFrame {
 
     private void jLabel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MouseClicked
       this.dispose();
-      Home h=new Home();
-    h.setVisible(true);
+       new Home().setVisible(true);
       
     }//GEN-LAST:event_jLabel2MouseClicked
 
     private void jButtonDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDeleteActionPerformed
         // TODO add your handling code here:
+        int p=JOptionPane.showConfirmDialog(null,"Do you wnt to Delete the record"+jTextFieldClientName.getText()+"Client","Delete",JOptionPane.YES_NO_OPTION);
+        if(p==0){
+        PreparedStatement pat ;
+        MySQLConnect myc = new MySQLConnect();
+        Connection con =myc.getConn();
+        String sql = "delete from client_info where id = ?";
+        
+        try{
+        pat = con.prepareStatement(sql);
+        pat.setString(1, jTextFieldClientId.getText());
+        pat.executeUpdate();
+        JOptionPane.showMessageDialog(null,"Record Deleted");
+        
+        update_table();//updated record after delete
+        jButtonClearActionPerformed(evt);
+        }catch(Exception e){
+         JOptionPane.showMessageDialog(null,"delete record"+ e);
+        }finally {
+                        try{
+                            if ( con!=null) {
+                                con.close();
+                                System.out.println("Client Information DB Disconnected");
+                                
+                            }
+                        }catch (Exception e) {
+                               JOptionPane.showMessageDialog(null," Client Information delete record Finally block error " + e);
+                               Logger.getLogger(ClientInformationSystem.class.getName()).log(Level.SEVERE,null,e);
+                        } // catch 
+                    } // finally 
+        }
     }//GEN-LAST:event_jButtonDeleteActionPerformed
     // logic for clear button 
     private void jButtonClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonClearActionPerformed
@@ -560,12 +692,11 @@ public class ClientInformationSystem extends javax.swing.JFrame {
         String cname=jTextFieldClientName.getText().toString();
         String address=jTextAreaAddress.getText().toString() ;
         Date stringDate=jDateChooserDate.getDate();
-        
         String phoneNo=jTextFieldContacts.getText();
         
         // .toString()
        
-        JOptionPane.showMessageDialog(null,"Save button Clicked");
+        //JOptionPane.showMessageDialog(null,"Save button Clicked");
         //apply validation logic 
         
         if(cid.trim().equals("") ||cid.trim().equals("Enter Client ID") ||
@@ -581,19 +712,27 @@ public class ClientInformationSystem extends javax.swing.JFrame {
        }  //if  ends here
         
         else { 
-                    JOptionPane.showMessageDialog(null,"All fields are filled");  
+                    //JOptionPane.showMessageDialog(null,"All fields are filled");  
                     Connection con= myc.getConn();
-                    PreparedStatement pat;
+                    
                     ResultSet rs;
                     
                     try{
                       String sql="select max_id from variable_table";
-                      pat=con.prepareStatement(sql);
+                     // JOptionPane.showMessageDialog(null,sql);
+
+                     PreparedStatement  pat=con.prepareStatement(sql);
                       rs=pat.executeQuery(sql);
                       int num=0;
+                      //JOptionPane.showMessageDialog(null,rs.next()); 
                       if(rs.next() ) {
                        num=rs.getInt(1)+1;
+                       sql = "update variable_table set max_id = '"+num+"'";
+                        pat=con.prepareStatement(sql);
+                        pat.execute();
                       }
+                     // num = num+1;
+                    // num++;
                       java.sql.Date sqlDate =new java.sql.Date(jDateChooserDate.getDate().getTime());
                       
                       sql="insert into client_info(id,name,address,contact,date) values(?,?,?,?,?)";
@@ -605,11 +744,14 @@ public class ClientInformationSystem extends javax.swing.JFrame {
                       pat.setString(4,phoneNo);
                       
                       int i=pat.executeUpdate();
+                        jButtonClearActionPerformed(evt);
+                     
+                         update_table();
                       if(i >= 1){
                           JOptionPane.showMessageDialog(null,cname+ " Client information" + "saved Successfully to database table...");
                          
                           // call clear action event internally 
-                          jButtonSaveActionPerformed(evt);
+                       
                       
                       } else{
                          JOptionPane.showMessageDialog(null,cname+ " Client information" + " not saved  to database table...");
@@ -620,6 +762,7 @@ public class ClientInformationSystem extends javax.swing.JFrame {
         
                     }finally {
                         try{
+                           
                             if ( con!=null) {
                                 con.close();
                                 System.out.println("Client Information DB Disconnected");
@@ -627,10 +770,199 @@ public class ClientInformationSystem extends javax.swing.JFrame {
                             }
                         }catch (Exception e) {
                                JOptionPane.showMessageDialog(null,cname+ " Client Information Finally block error " + e);
+                               Logger.getLogger(ClientInformationSystem.class.getName()).log(Level.SEVERE,null,e);
                         } // catch 
                     } // finally 
         } // else 
     }//GEN-LAST:event_jButtonSaveActionPerformed
+
+    private void jButtonUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonUpdateActionPerformed
+        // TODO add your handling code here:
+        PreparedStatement pat;
+        MySQLConnect myc = new MySQLConnect();
+        Connection con=myc.getConn();
+        
+        try{
+            String name=jTextFieldClientName.getText().toString().trim();
+            String address=jTextAreaAddress.getText().toString().trim();
+            String phone=jTextFieldContacts.getText().toString().trim();
+            String cid=jTextFieldClientId.getText().toString().trim();
+            java.sql.Date date = new java.sql.Date(jDateChooserDate.getDate().getTime());
+            String sql = "update client_info set name = ?, address = ?, contact = ?, date =? where id = ?";
+            
+             pat = con.prepareStatement(sql);
+             pat.setString(1,name);
+             pat.setString(2,address);
+             pat.setString(3,phone);
+             pat.setDate(4,date);
+             pat.setInt(5,Integer.parseInt(cid));
+             
+             int i = pat.executeUpdate();
+              update_table();//updated record 
+              jButtonClearActionPerformed(evt);
+             if(i>1){
+                 JOptionPane.showMessageDialog(null,jTextFieldClientId.getText()+ " Client information fail to Updated  to database table...");
+                  
+             }else{
+              JOptionPane.showMessageDialog(null,jTextFieldClientId.getText()+ " Client information  Updated Successfully in database table...");
+             } 
+        
+        }catch(Exception e){
+         JOptionPane.showMessageDialog(null,"Update the record ");
+        }finally {
+                        try{
+                            if ( con!=null) {
+                                con.close();
+                                System.out.println("Client Information DB Disconnected");
+                                
+                            }
+                        }catch (Exception e) {
+                               JOptionPane.showMessageDialog(null," Client Information delete record Finally block error " + e);
+                               Logger.getLogger(ClientInformationSystem.class.getName()).log(Level.SEVERE,null,e);
+                        } // catch 
+                    } // finally 
+        
+        
+        
+        
+    }//GEN-LAST:event_jButtonUpdateActionPerformed
+
+    private void jButtonPrintActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPrintActionPerformed
+        // TODO add your handling code here:
+        MessageFormat header = new MessageFormat("Print Report");
+        MessageFormat footer = new MessageFormat("page{0,number,integer}");
+        try{
+        jTable1.print(JTable.PrintMode.NORMAL,header,footer);
+        }catch(Exception e){
+        System.out.println("Error in Print Button"+e);
+        
+        }
+    }//GEN-LAST:event_jButtonPrintActionPerformed
+
+    private void jTextFieldSearchClientidActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldSearchClientidActionPerformed
+        // TODO add your handling code here:
+        
+        
+    }//GEN-LAST:event_jTextFieldSearchClientidActionPerformed
+
+    private void jTextFieldSearchClientidKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldSearchClientidKeyReleased
+        // TODO add your handling code here:
+        int flg=0;
+        PreparedStatement pst;
+        ResultSet rs;
+        MySQLConnect msc=new MySQLConnect();
+        Connection con=msc.getConn();
+        try{
+            //serch by using client name
+            String query="select * from client_info where name like '%"+jTextFieldSearchClientid.getText()+"%'";
+            pst=con.prepareStatement(query);
+          // pst.setString(1,jTextFieldClientId.getText());
+            rs=pst.executeQuery();
+            if(rs.next()){
+                flg=1;
+                 jTextFieldClientId.setText(rs.getString("id"));
+                jTextFieldClientName.setText(rs.getString("name"));
+                jTextAreaAddress.setText(rs.getString("address"));
+                 jTextFieldContacts.setText(rs.getString("contact"));
+                 java.util.Date dat=new SimpleDateFormat("yyyy-MM-dd").parse(rs.getObject("date").toString());
+                   
+                 jDateChooserDate.setDate(dat);
+                 //JOptionPane.showMessageDialog(null,"client not available create a new one");
+                
+            }else{
+                set_client_id();
+                jTextFieldClientId.setText("");
+                jTextFieldClientName.setText("");
+                jTextAreaAddress.setText("");
+                jTextFieldContacts.setText("");
+                jDateChooserDate.setDate(null);
+                
+              
+                
+                
+            }
+        }catch(Exception e){
+            Logger.getLogger(ClientInformationSystem.class.getName()).log(Level.SEVERE, "Error", e);
+            System.out.println("Error"+e);
+            JOptionPane.showMessageDialog(null,"Eroor");
+        }
+         try{
+            //serch by using client id
+            String query="select * from client_info where id =?";
+            pst=con.prepareStatement(query);
+           pst.setString(1,jTextFieldSearchClientid.getText());
+            rs=pst.executeQuery();
+            if(rs.next()&&flg==0){
+             
+                 jTextFieldClientId.setText(rs.getString("id"));
+                jTextFieldClientName.setText(rs.getString("name"));
+                jTextAreaAddress.setText(rs.getString("address"));
+                 jTextFieldContacts.setText(rs.getString("contact"));
+                 java.util.Date dat=new SimpleDateFormat("yyyy-MM-dd").parse(rs.getObject("date").toString());
+                 jDateChooserDate.setDate(dat);
+                
+            }else if(flg==0){
+                flg=1;
+                set_client_id();
+                jTextFieldClientId.setText("");
+                jTextFieldClientName.setText("");
+                jTextAreaAddress.setText("");
+                jTextFieldContacts.setText("");
+                jDateChooserDate.setDate(null);
+                JOptionPane.showMessageDialog(null,"client not available create a new one");
+                
+                
+            }
+        }catch(Exception e){
+            Logger.getLogger(ClientInformationSystem.class.getName()).log(Level.SEVERE, "Error", e);
+            System.out.println("Error"+e);
+            //JOptionPane.showMessageDialog(null,"Eroor");
+        }
+         finally{
+           try{
+               if(con!=null)
+                   con.close();
+           }catch(Exception e){
+                
+           }
+             
+          }
+    }//GEN-LAST:event_jTextFieldSearchClientidKeyReleased
+
+    private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
+        // TODO add your handling code here:
+           PreparedStatement pst;
+        MySQLConnect mSc=new MySQLConnect();
+        Connection con=mSc.getConn();
+        ResultSet rs;
+        try{
+            int row =jTable1.getSelectedRow();
+            String tbale_click=jTable1.getModel().getValueAt(row, 0).toString();
+            String qurey="select * from client_info where id='"+tbale_click+"'";
+            pst=con.prepareStatement(qurey);
+            rs=pst.executeQuery();
+            if(rs.next()){
+                jTextFieldClientId.setText(rs.getString("id"));
+                jTextFieldClientName.setText(rs.getString("name"));
+                jTextAreaAddress.setText(rs.getString("address"));
+                jTextFieldContacts.setText(rs.getString("contact"));
+                String sd=rs.getObject("date").toString();
+                 java.util.Date date=new SimpleDateFormat("yyyy-MM-dd").parse(sd);
+                 jDateChooserDate.setDate(date);
+                
+            }
+        }catch(Exception e){
+            JOptionPane.showMessageDialog(null, "error at  client informaiton table key presses"+e);
+        }
+        finally{
+            try{
+                if(con!=null)
+                    con.close();
+            }catch(Exception e){
+                System.out.println("");
+            }
+        }
+    }//GEN-LAST:event_jTable1MouseClicked
 
     /**
      * @param args the command line arguments
